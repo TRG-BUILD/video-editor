@@ -27,8 +27,6 @@ class Video:
                 main_stream = ffmpeg.input(video["path"])
         
         self.stream = main_stream
-        stream = ffmpeg.output(self.stream, "C:\\Users\\Martin\\projects\\build\\video-editor\\video-editor\\videos")
-        print(stream)
 
     def save_video(self, path):
         stream = ffmpeg.output(self.stream, path)
