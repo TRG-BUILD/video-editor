@@ -1,4 +1,5 @@
 import ffmpeg
+from .scene import Scene
 
 class Video:
     """A Video is the class being constituted by Scenes and Transitions, as well as any needed metadata"""
@@ -14,21 +15,14 @@ class Video:
         return name
 
     def add_video(self, path):
-        self.footage.append({"name": path.split("\\")[-1], "path": path})
+        self.footage.append(Scene(path))
 
-    def start_edit(self):
-        main_stream = None
-        for video in self.footage:
-            if main_stream:
-                streams = [main_stream]
-                streams.append(ffmpeg.input(video["path"]))
-                main_stream = ffmpeg.concat(streams)
+    def save_video(self, output_path):
+        for scene in self.footage:
+            if self.stream:
+                self.stream = ffmpeg.concat(self.stream, scene.stream)
             else:
-                main_stream = ffmpeg.input(video["path"])
-        
-        self.stream = main_stream
-
-    def save_video(self, path):
-        stream = ffmpeg.output(self.stream, path)
+                self.stream = ffmpeg.input(scene.stream)
+        stream = ffmpeg.output(self.stream, output_path)
         ffmpeg.run(stream)
         
