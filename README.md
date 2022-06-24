@@ -6,12 +6,12 @@ git clone the project into your chosen directory
 open a terminal and go into the path/to/your/dir/video-editor directory
 Run the following commands
 
-if Win: video-editor-env\Scripts\activate.bat
-If Mac: video-editor-env/bin/activate
-cd video-editor
+if Win: .env\Scripts\activate.bat
+If Mac: .env/bin/activate
+cd video_editor
 python main.py
 
-Then just follow the instructions given
+Then just follow the instructions given.
 
 # Current status
 As a completely new project, it currently doesn't support any features
