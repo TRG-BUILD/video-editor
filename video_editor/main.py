@@ -30,15 +30,22 @@ def load_video_view():
     while edit_command != 'merge' and edit_command != "edit":
         edit_command = input("Please enter 'merge' or 'edit'\n")
         
+    has_sound = "start"
+    print("Does the videos you want to edit/merge use sound or not?")
+    while has_sound != "y" and has_sound != "n":
+        has_sound = input("Please write 'y' or 'n'")
+        
+    has_sound = True if has_sound == "y" else False if has_sound == "n" else None
+        
     if edit_command == "edit":
-        video = load_video()
+        video = load_video(has_sound)
         will_edit = True
     elif edit_command == "merge":
         will_edit = False
         video = Video()
         add_more = True
         while add_more:
-            next_video = load_video()
+            next_video = load_video(has_sound)
             video.cuts.append(next_video.video)
             print("Do you want to add more?")
             yes_or_no = "start"
@@ -49,7 +56,7 @@ def load_video_view():
     
     return video, will_edit
 
-def load_video():
+def load_video(has_sound):
     video = Video()
     print("Give the path to the video.")
     print("Give the absolute path to your video, for instance:")
@@ -61,16 +68,8 @@ def load_video():
         if not path:
             print("You entered in a non-valid path, try again\n")
         else:
+            video.add_video(path, has_sound)
             try_path_again = False
-            try_sound_again = True
-            while try_sound_again:
-                has_sound = input("Does the video have sound? Write 'y' or 'n'\n")
-                has_sound = True if has_sound == "y" else False if has_sound == "n" else None
-                if has_sound is not None:
-                    video.add_video(path, has_sound)
-                    try_sound_again = False
-                else:
-                    print("Please write lower case y or n only. Just a single letter\n")
 
     return video
 

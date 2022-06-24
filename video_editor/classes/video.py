@@ -7,22 +7,31 @@ class Video:
     def __init__(self):
         self.video = None
         self.has_sound = False
+        self.max_duration = 0
         self.cuts = []
 
     def __str__(self):
-        return "Edit of " + self.video.name
+        return "Based of " + self.video.name
 
     def add_video(self, path, has_sound):
         self.video = Scene(path, has_sound)
         self.has_sound = has_sound
+        self.max_duration = 50
         
     def add_cut(self, start_time, end_time):
         start_sec = self._convert_time_to_seconds(start_time)
         end_sec = self._convert_time_to_seconds(end_time)
+        if start_sec < 0 or end_sec > self.max_duration:
+            return False
+        
         new_cut = Scene(self.video.path, self.video.has_sound)
         new_cut.name = "Cut from " + start_time + " to " + end_time
-        new_cut.video = new_cut.stream.video.filter("trim",start=start_sec, end=end_sec).setpts("PTS-STARTPTS")
-        new_cut.audio = new_cut.stream.audio.filter("atrim",start=start_sec, end=end_sec).filter("asetpts", "PTS-STARTPTS")
+        if len(self.cuts) == 0:
+            new_cut.video = new_cut.stream.video.filter("trim",start=start_sec, end=end_sec).setpts("PTS-STARTPTS")
+            new_cut.audio = new_cut.stream.audio.filter("atrim",start=start_sec, end=end_sec).filter("asetpts", "PTS-STARTPTS")
+        else:
+            new_cut.video = new_cut.stream.video.filter("trim",start=start_sec, end=end_sec)
+            new_cut.audio = new_cut.stream.audio.filter("atrim",start=start_sec, end=end_sec)
         self.cuts.append(new_cut)
         return True
     
