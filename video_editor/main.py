@@ -13,35 +13,64 @@ def edit():
     print("Third, the program will create the new video at the location you choose")
 
     print("\nLoad footage\n")
-    video = load_video_view()
-    print("\nEdit footage\n")
-    video = edit_video_view(video)
+    video, will_edit = load_video_view()
+    if(will_edit):
+        print("\nEdit footage\n")
+        video = edit_video_view(video)
     print("\nPublish video\n")
     publish_video_view(video)
 
     return True
     
-
 def load_video_view():
     video = Video()
-    print("Give the path to a video for editing. You can only edit one video at a time.")
+    
+    print("Do you want to merge multiple videos or edit a single video?")
+    edit_command = "start"
+    while edit_command != 'merge' and edit_command != "edit":
+        edit_command = input("Please enter 'merge' or 'edit'\n")
+        
+    if edit_command == "edit":
+        video = load_video()
+        will_edit = True
+    elif edit_command == "merge":
+        will_edit = False
+        video = Video()
+        add_more = True
+        while add_more:
+            next_video = load_video()
+            video.cuts.append(next_video.video)
+            print("Do you want to add more?")
+            yes_or_no = "start"
+            while yes_or_no != "y" and yes_or_no != "n":
+                yes_or_no = input("Please enter 'y' or 'n'\n")
+            if yes_or_no == "n":
+                add_more = False
+    
+    return video, will_edit
+
+def load_video():
+    video = Video()
+    print("Give the path to the video.")
     print("Give the absolute path to your video, for instance:")
     print("C:\\path\\to\\your\\video.mov")
-    try_again = True
-    while try_again:
+    try_path_again = True
+    while try_path_again:
         path = input("Please enter in a new path or STOP\n")
         path = _validate_command(path)
         if not path:
             print("You entered in a non-valid path, try again\n")
         else:
-            while try_again:
-                has_sound = input("Does the video have sound? Write 'y' or 'n'")
+            try_path_again = False
+            try_sound_again = True
+            while try_sound_again:
+                has_sound = input("Does the video have sound? Write 'y' or 'n'\n")
                 has_sound = True if has_sound == "y" else False if has_sound == "n" else None
                 if has_sound is not None:
                     video.add_video(path, has_sound)
-                    try_again = False
+                    try_sound_again = False
                 else:
-                    print("Please write lower case y or n only. Just a single letter")
+                    print("Please write lower case y or n only. Just a single letter\n")
 
     return video
 
